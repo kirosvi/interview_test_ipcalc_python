@@ -1,0 +1,6 @@
+dependencies:
+- name: helm-common
+  repository: https://kirosvi.github.io/hc-chart
+  version: 0.0.2
+digest: sha256:e6e406dfb070498b10404990d633853071812f1158f9e78864a378a072c8e652
+generated: "2022-05-05T14:41:16.048088064Z"

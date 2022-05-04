@@ -1,0 +1,8 @@
+version: '3'
+services:
+  nginx:
+    image: kiros/ipcalc-nginx:0.0.1
+    ports:
+      - "8000:80"
+  app:
+    image: kiros/ipcalc-app:0.0.1
