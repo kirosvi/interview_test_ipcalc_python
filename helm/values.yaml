@@ -1,0 +1,109 @@
+issuer:
+  acmeHttp:
+    enabled: false
+    name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: needsToDefine@example.com
+  selfsigned:
+    enabled: true
+    clusterIssuerName: selfsigned-issuer
+    certificateName: my-selfsigned-ca
+    issuerName: &issuerName my-ca-issuer
+
+app:
+  default_nginx_port: &default_svc_port 80
+  app_port: &app_svc_port 5000
+  domain: &app_domain_name test.k8s.local.dev
+
+
+helm-common:
+  apps:
+    app:
+      labels: {}
+      replicas:
+        prod: 2
+      podDisruptionBudget: 1
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+          - "app"
+      containers:
+      - name: nginx
+        image: kiros/ipcalc-nginx:0.0.3
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /nginx-health
+            port: *default_svc_port
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /nginx-health
+            port: *default_svc_port
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      - name: app
+        image: kiros/ipcalc-app:0.0.3
+        imagePullPolicy: Always
+        livenessProbe:
+          tcpSocket:
+            port: *app_svc_port
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          tcpSocket:
+            port: *app_svc_port
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+
+  services:
+    app:
+      type: ClusterIP
+      ports:
+        - name: http
+          port: *default_svc_port
+          targetPort: *default_svc_port
+          protocol: TCP
+
+  app_ingress_paths: &app_ingress_paths
+    - path: /
+      service:
+        name: app
+        port: *default_svc_port
+      pathType: Prefix
+
+  ingress:
+    app:
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+        cert-manager.io/issuer: *issuerName
+      className:
+        _default: nginx
+      acme:
+        _default: true
+      acme_for_branches:
+        - master
+      rules:
+        - host:
+            _default: *app_domain_name
+          paths: *app_ingress_paths

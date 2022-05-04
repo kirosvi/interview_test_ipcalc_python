@@ -1,0 +1,10 @@
+apiVersion: v2
+name: ipcalc-app
+description: A Helm chart with test app
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+dependencies:
+  - name: helm-common
+    version: 0.0.2
+    repository: https://kirosvi.github.io/hc-chart

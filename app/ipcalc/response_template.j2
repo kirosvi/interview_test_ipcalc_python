@@ -1,0 +1,16 @@
+{% if  data.error %}
+{{ data.error }}
+{% else %}
+Subnet info:
+  IP the version number: {{ data.net_version }}
+  Private address: {{ data.private_address }}
+  Total number of addresses: {{ data.net_total_addr_num }}
+  Total number of available ip addresses: {{ data.net_tatal_avbl_addr_num }}
+  The network number: {{ data.net_num }}
+  Initial available ip address: {{ data.net_init_addr }}
+  Finally, an ip address is available: {{ data.net_final_addr }}
+  Available ip address range: {{ data.net_addr_range }}
+  Address mask: {{ data.net_addr_mask }}
+  Mask address: {{ data.net_host_mask }}
+  The broadcast address: {{ data.net_bradcast_addr }}
+{% endif %}

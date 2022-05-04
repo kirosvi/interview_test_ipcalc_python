@@ -1,0 +1,23 @@
+<html>
+  <body>
+This is app that give you information about required subnetwork.
+Just use request with subnetwork payload to get info about it.
+Example:
+<pre><code>
+  curl 'http://${SERVER_ADDRESS}/calc?net=192.168.1.19/30'
+
+  Subnet info:
+    IP the version number: 4
+    Private address: True
+    Total number of addresses: 4
+    Total number of available ip addresses: 2
+    The network number: 192.168.1.16
+    Initial available ip address: 192.168.1.17
+    Finally, an ip address is available: 192.168.1.18
+    Available ip address range: 192.168.1.17 ~ 192.168.1.18
+    Address mask: 255.255.255.252
+    Mask address: 0.0.0.3
+    The broadcast address: 192.168.1.19
+</pre>
+  </body>
+</html>
